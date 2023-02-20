@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Employee Data</title>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<style>
+        body {
+            margin-right: 5%;
+            margin-left: 5%;
+        }
+
+        h1 {
+            margin: auto;
+            width: 30%;
+        }
+
+        #section1 {
+            margin: auto;
+			width: 70%;
+        }
+
+
+        h2 {
+            margin-top: 40px;
+            margin: auto;
+            width: 50%;
+        }
+
+		.left{
+			float: left;
+		}
+
+		.second{
+			float: none;
+		}
+
+        #min, #max {
+            margin-right: 20px;
+            margin-left: 20px;
+        }
+
+        #avgPay {
+			min-width:150px;
+			margin-top:100px;
+            float: left;
+            font-size: 30px;
+        }
+
+		#slider{
+			width: 300px;
+		}
+
+        .container {
+            width: 500px;
+            height: 400px;
+            overflow: hidden;
+            position: relative;
+            margin: 50px auto;
+        }
+
+        .barcontainer {
+            background-color: #181818;
+            position: relative;
+            transform: translateY(-30%);
+            top: 50%;
+            margin-left: 50px;
+			margin-top: 50px;
+            width: 50px;
+            height: 300px;
+            float: left;
+            //border darken(#98AFC7, 40%) 3px solid
+        }
+
+        .bar {
+            background-color: #9BC9C7;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 80%;
+            //border-top: 6px solid #FFF;
+            box-sizing: border-box;
+            animation: grow 1.5s ease-out forwards;
+            transform-origin: bottom;
+        }
+
+        @keyframes grow {
+            from {
+                transform: scaleY(0);
+            }
+        }
+
+        /* Tooltip container */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            opacity: 100;
+		}
+
+        /* Tooltip text */
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: black;
+            color: #fff;
+            text-align: center;
+            padding: 5px 0;
+            border-radius: 6px;
+            /* Position the tooltip text - see examples below! */
+            position: absolute;
+            z-index: 1;
+        }
+
+        /* Show the tooltip text when you mouse over the tooltip container */
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+        }
+	</style>
+	<link href="nouislider.min.css" rel="stylesheet">
+</head>
+<body>
+	<script src="nouislider.min.js"></script>
+
+		<h1>Employee Data</h1>
+		<div id="section1">
+			<h2 class="first">Interactive Average Pay</h2>
+			<form class="left">
+				<input checked type="checkbox" id="male" value="Male" onclick="checkboxClicked('male')" />
+				<label for="Male">Male</label>
+				<br />
+				<input checked type="checkbox" id="female" value="Female" onclick="checkboxClicked('female')" />
+				<label for="Female">Female</label>
+				<br />
+				<input checked type="checkbox" id="black" value="Black" onclick="checkboxClicked('black')" />
+				<label for="Black">Black</label>
+				<br />
+				<input checked type="checkbox" id="asian" value="Asian" onclick="checkboxClicked('asian')" />
+				<label for="Asian">Asian</label>
+				<br />
+				<input checked type="checkbox" id="white" value="White" onclick="checkboxClicked('white')" />
+				<label for="White">White</label>
+				<br />
+				<input checked type="checkbox" id="latino" value="Latino" onclick="checkboxClicked('latino')" />
+				<label for="Latino">Latino</label>
+				<br />
+				<label for="Age" class="left">Age:</label>
+				<p id="min" class="left">18</p>
+				<div class="left" id="slider" name="Age">
+				</div>
+				<p id="max" class="left">60</p>
+				<br />
+			</form>
+			<h3 id="avgPay">$46,523.12</h3>
+			<div class="tooltip">
+				<div class="barcontainer">
+					<div id="bar" class="bar " style="height:70%">
+					</div>
+					<span class="tooltiptext">Percent Compared to Highest Pay</span>
+				</div>
+		</div>
+	</div>
+	<script>
+
+		var slider = document.getElementById('slider');
+
+		noUiSlider.create(slider, {
+			start: [18, 60],
+			connect: true,
+			range: {
+				'min': 18,
+				'max': 60
+			}
+		});
+
+		const data = [
+			{ sex: 'Female', race: 'White', age: 18.1, basePay: 44744 },
+			{ sex: 'Female', race: 'White', age: 28.76, basePay: 60284 },
+			{ sex: 'Male', race: 'Black', age: 30.54, basePay: 46344 },
+			{ sex: 'Male', race: 'Black', age: 32.44, basePay: 34433 },
+			{ sex: 'Female', race: 'White', age: 34.59, basePay: 40023 },
+			{ sex: 'Female', race: 'Latino', age: 35.87, basePay: 45823 },
+			{ sex: 'Female', race: 'White', age: 38.41, basePay: 32000 },
+			{ sex: 'Female', race: 'Latino', age: 41.33, basePay: 49756 },
+			{ sex: 'Female', race: 'White', age: 45.52, basePay: 36535 },
+			{ sex: 'Male', race: 'White', age: 18.1, basePay: 60376 },
+			{ sex: 'Female', race: 'White', age: 26.41, basePay: 38542 },
+			{ sex: 'Male', race: 'Black', age: 27.15, basePay: 36561 },
+			{ sex: 'Female', race: 'Black', age: 27.29, basePay: 44452 },
+			{ sex: 'Female', race: 'White', age: 27.43, basePay: 56760 },
+			{ sex: 'Female', race: 'Latino', age: 27.57, basePay: 48817 },
+			{ sex: 'Female', race: 'White', age: 27.8, basePay: 40083 },
+			{ sex: 'Female', race: 'White', age: 27.81, basePay: 32000 },
+			{ sex: 'Female', race: 'Latino', age: 28.64, basePay: 54337 },
+			{ sex: 'Male', race: 'Latino', age: 28.76, basePay: 41010 },
+			{ sex: 'Female', race: 'White', age: 29.11, basePay: 49855 },
+			{ sex: 'Male', race: 'Black', age: 29.29, basePay: 46275 },
+			{ sex: 'Female', race: 'White', age: 29.57, basePay: 47313 },
+			{ sex: 'Female', race: 'White', age: 29.73, basePay: 50220 },
+			{ sex: 'Male', race: 'Black', age: 29.8, basePay: 59122 },
+			{ sex: 'Male', race: 'Black', age: 29.95, basePay: 58481 },
+			{ sex: 'Female', race: 'White', age: 29.98, basePay: 45121 },
+			{ sex: 'Male', race: 'Black', age: 30.11, basePay: 57194 },
+			{ sex: 'Male', race: 'Asian', age: 30.11, basePay: 43995 },
+			{ sex: 'Female', race: 'White', age: 30.31, basePay: 45983 },
+			{ sex: 'Male', race: 'Black', age: 30.85, basePay: 48977 },
+			{ sex: 'Female', race: 'White', age: 30.88, basePay: 51785 },
+			{ sex: 'Male', race: 'White', age: 31.15, basePay: 50593 },
+			{ sex: 'Male', race: 'Black', age: 31.47, basePay: 36380 },
+			{ sex: 'Female', race: 'Black', age: 31.75, basePay: 39861 },
+			{ sex: 'Male', race: 'Latino', age: 31.84, basePay: 39723 },
+			{ sex: 'Female', race: 'White', age: 31.89, basePay: 54433 },
+			{ sex: 'Male', race: 'White', age: 31.92, basePay: 38264 },
+			{ sex: 'Female', race: 'Latino', age: 32.03, basePay: 39394 },
+			{ sex: 'Female', race: 'Black', age: 32.23, basePay: 39699 },
+			{ sex: 'Female', race: 'White', age: 32.78, basePay: 56384 },
+			{ sex: 'Male', race: 'Black', age: 32.9, basePay: 43353 },
+			{ sex: 'Female', race: 'White', age: 33.13, basePay: 32000 },
+			{ sex: 'Female', race: 'White', age: 33.21, basePay: 44606 },
+			{ sex: 'Female', race: 'White', age: 33.65, basePay: 44133 },
+			{ sex: 'Male', race: 'Black', age: 34.25, basePay: 45708 },
+			{ sex: 'Female', race: 'White', age: 34.26, basePay: 40459 },
+			{ sex: 'Female', race: 'Black', age: 34.32, basePay: 32000 },
+			{ sex: 'Female', race: 'White', age: 34.45, basePay: 47885 },
+			{ sex: 'Male', race: 'White', age: 34.48, basePay: 54524 },
+			{ sex: 'Male', race: 'Black', age: 34.65, basePay: 53258 },
+			{ sex: 'Male', race: 'White', age: 34.76, basePay: 32000 },
+			{ sex: 'Male', race: 'Black', age: 35.02, basePay: 51076 },
+			{ sex: 'Female', race: 'White', age: 35.12, basePay: 49781 },
+			{ sex: 'Female', race: 'White', age: 35.16, basePay: 43842 },
+			{ sex: 'Male', race: 'Black', age: 35.27, basePay: 40083 },
+			{ sex: 'Female', race: 'White', age: 35.53, basePay: 32000 },
+			{ sex: 'Female', race: 'Black', age: 35.56, basePay: 39734 },
+			{ sex: 'Female', race: 'White', age: 35.57, basePay: 54727 },
+			{ sex: 'Female', race: 'White', age: 35.58, basePay: 38629 },
+			{ sex: 'Female', race: 'Latino', age: 36.13, basePay: 45026 },
+			{ sex: 'Male', race: 'White', age: 36.53, basePay: 50048 },
+			{ sex: 'Female', race: 'White', age: 36.58, basePay: 38060 },
+			{ sex: 'Male', race: 'White', age: 36.64, basePay: 49228 },
+			{ sex: 'Male', race: 'White', age: 36.87, basePay: 41572 },
+			{ sex: 'Female', race: 'White', age: 37.38, basePay: 36163 },
+			{ sex: 'Male', race: 'Black', age: 37.79, basePay: 50953 },
+			{ sex: 'Male', race: 'Black', age: 37.84, basePay: 49450 },
+			{ sex: 'Male', race: 'Asian', age: 37.91, basePay: 51605 },
+			{ sex: 'Female', race: 'White', age: 38.32, basePay: 43756 },
+			{ sex: 'Female', race: 'Black', age: 38.6, basePay: 54706 },
+			{ sex: 'Female', race: 'White', age: 38.64, basePay: 48177 },
+			{ sex: 'Female', race: 'White', age: 38.87, basePay: 51164 },
+			{ sex: 'Female', race: 'White', age: 39.18, basePay: 52855 },
+			{ sex: 'Male', race: 'White', age: 39.34, basePay: 39452 },
+			{ sex: 'Female', race: 'White', age: 39.44, basePay: 40949 },
+			{ sex: 'Female', race: 'Latino', age: 39.53, basePay: 44799 },
+			{ sex: 'Female', race: 'White', age: 39.63, basePay: 63603 },
+			{ sex: 'Female', race: 'White', age: 40.37, basePay: 62013 },
+			{ sex: 'Female', race: 'White', age: 40.71, basePay: 57669 },
+			{ sex: 'Female', race: 'White', age: 41.74, basePay: 48737 },
+			{ sex: 'Female', race: 'White', age: 42.03, basePay: 50997 },
+			{ sex: 'Female', race: 'White', age: 42.28, basePay: 56156 },
+			{ sex: 'Female', race: 'White', age: 42.61, basePay: 47088 },
+			{ sex: 'Female', race: 'White', age: 42.62, basePay: 61258 },
+			{ sex: 'Female', race: 'White', age: 43, basePay: 54267 },
+			{ sex: 'Female', race: 'White', age: 43.49, basePay: 43058 },
+			{ sex: 'Male', race: 'Black', age: 43.65, basePay: 40483 },
+			{ sex: 'Female', race: 'White', age: 44.97, basePay: 41089 },
+			{ sex: 'Female', race: 'Latino', age: 44.97, basePay: 39693 },
+			{ sex: 'Male', race: 'Black', age: 47.09, basePay: 51861 },
+			{ sex: 'Female', race: 'White', age: 47.46, basePay: 32000 },
+			{ sex: 'Female', race: 'White', age: 43.03, basePay: 55232 },
+			{ sex: 'Female', race: 'Black', age: 45.45, basePay: 52314 },
+			{ sex: 'Female', race: 'White', age: 48.57, basePay: 32000 },
+			{ sex: 'Female', race: 'White', age: 49.23, basePay: 44974 },
+			{ sex: 'Female', race: 'Latino', age: 49.57, basePay: 32000 },
+			{ sex: 'Female', race: 'White', age: 50.29, basePay: 56877 },
+			{ sex: 'Male', race: 'Black', age: 51.16, basePay: 54608 },
+			{ sex: 'Male', race: 'White', age: 53.96, basePay: 59276 },
+			{ sex: 'Female', race: 'White', age: 18.1, basePay: 51648 },
+			{ sex: 'Female', race: 'Latino', age: 20.46, basePay: 48375 },
+			{ sex: 'Female', race: 'Latino', age: 20.48, basePay: 32000 },
+			{ sex: 'Female', race: 'White', age: 20.56, basePay: 44899 },
+			{ sex: 'Female', race: 'White', age: 21.21, basePay: 61992 },
+			{ sex: 'Male', race: 'Asian', age: 21.66, basePay: 53940 },
+			{ sex: 'Male', race: 'White', age: 22.06, basePay: 42354 },
+			{ sex: 'Female', race: 'White', age: 23.67, basePay: 52736 },
+			{ sex: 'Female', race: 'White', age: 24.25, basePay: 57225 },
+			{ sex: 'Male', race: 'Latino', age: 25.34, basePay: 51022 },
+			{ sex: 'Male', race: 'Asian', age: 26.43, basePay: 40640 },
+			{ sex: 'Male', race: 'White', age: 26.55, basePay: 40289 }
+		];
+
+		const filter = {
+			male: true,
+			female: true,
+			black: true,
+			asian: true,
+			white: true,
+			latino: true,
+			ageMin: 0,
+			agemax: 60
+		};
+
+
+		slider.noUiSlider.on('update', function (values, handle) {
+			filter.ageMin = values[0];
+			filter.ageMax = values[1];
+			edit();
+            document.getElementById('min').textContent = values[0];
+            document.getElementById('max').textContent = values[1];
+		});
+
+		function checkboxClicked(id) {
+			filter[id] = document.getElementById(id).checked;
+			edit();
+		}
+
+		function edit() {
+            let avg = getAverage(filter)
+			let formatAvg = Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(avg);
+            document.getElementById('avgPay').textContent = formatAvg;
+			let highestPay = 63603.98;
+            let percent = (avg / highestPay)*100;
+            console.log(percent);
+			document.getElementById('bar').style.height = percent + '%';
+		}
+
+		function getAverage() {
+			let totalPay = 0;
+			let totalPeople = 0;
+			for (x of data) {
+				if (checkPerson(x)) {
+					totalPay += x.basePay;
+					totalPeople += 1;
+				}
+			}
+			if (totalPay == 0) return 0;
+			return totalPay / totalPeople;
+		}
+
+		function checkPerson(x) {
+			if (!filter.male && x.sex == 'Male') {
+				return false;
+			}
+			if (!filter.female && x.sex == 'Female') {
+				return false;
+			}
+			if (!filter.black && x.race == 'Black') {
+				return false;
+			}
+			if (!filter.asian && x.race == 'Asian') {
+				return false;
+			}
+			if (!filter.white && x.race == 'White') {
+				return false;
+			}
+			if (!filter.latino && x.race == 'Latino') {
+				return false;
+			}
+			if (!(x.age > filter.ageMin && x.age < filter.ageMax)) {
+				return false;
+			}
+			return true;
+		}
+
+
+
+
+	</script>
+	<br style="clear:both"/>
+	<div>
+		<h2 class="second">Base Pay by Race and Gender</h2>
+		<canvas id="basePayChart"></canvas>
+	</div>
+	<script>
+		var ctx = document.getElementById('basePayChart').getContext('2d');
+		var basePayChart = new Chart(ctx, {
+			type: 'bar',
+			data: {
+				labels: ['Black', 'Asian', 'White', 'Latino'],
+				datasets: [
+					{
+
+						type: 'bar',
+						label: 'Male Average Pay',
+						yAxisID: 'y',
+						backgroundColor: 'rgba(11, 127, 171, 0.2)',
+						borderColor: 'rgba(11, 127, 171,1)',
+						borderWidth: 1,
+						data: [47610.53, 47545, 46498, 43918.33]
+					},
+					{
+
+						type: 'bar',
+						label: 'Female Average Pay',
+						yAxesID: 'A',
+						backgroundColor: 'rgba(255, 99, 132, 0.2)',
+						borderColor: 'rgba(255,99,132,1)',
+						borderWidth: 1,
+						data: [43252.29, 0, 47213.98, 43638.18]
+					},
+					{
+						type: 'line',
+						label: 'Average Age',
+						yAxisID: 'y1',
+						data: [36, 29, 36, 33]
+					},
+                    {
+                        type: 'line',
+						label: 'Number of Employees',
+						borderColor: 'rgba(0,0,100,0.2)',
+                        backgroundColor: 'rgba(0,0,100,0.2)',
+                        yAxisID: 'y1',
+                        data: [25, 4, 65, 14]
+                    }
+				]
+			},
+			options: {
+				responsive: true,
+				interaction: {
+					mode: 'index',
+					intersect: false,
+				},
+				stacked: false,
+				
+				scales: {
+					y: {
+						type: 'linear',
+						display: true,
+						position: 'left',
+					},
+					y1: {
+						type: 'linear',
+						display: true,
+						position: 'right',
+
+						// grid line settings
+						grid: {
+							drawOnChartArea: false, // only want the grid lines for one axis to show up
+						},
+					},
+				}
+			},
+		});
+	</script>
+	<p>
+		<strong>My Process:</strong>
+		As a Computer Science major, I decided to incorporate my expertise into this project by creating an interactive website. I chose to display the information in a chart format, as I felt it was the most effective way to present the data. To further enhance the user experience, I overlaid an age line onto the bar chart, allowing viewers to gain a comprehensive understanding of the information with just a quick glance. Additionally, I color-coded the bars by gender-normative colors to make the data easier to interpret. Furthermore, I added an interactive element to the chart, allowing users to mouse over it to get a summary of the information. I also considered adding the number of employees to the graph, but I felt that this could make the graph too overwhelming.
+		<br />
+		<strong>Key Insights:</strong>
+		Opening the Excel sheet, I expected to see a greater disparity, particularly between genders. To my pleasant surprise, the disparity was not as large as I had anticipated. However, upon closer inspection of individual salaries, I noticed that there were outliers. For example, one female was making a significantly higher amount than her peers. If this outlier is removed, the average salary for white females drops substantially.
+	</p>
+</body>
+</html>
